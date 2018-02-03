@@ -37,6 +37,7 @@ kafka_broker = ''
 # >>> consumer = KafkaConsumer('stock-analyzer', bootstrap_servers='localhost:9092')
 # >>> for msg in consumer:
 # ...     print msg
+#test
 
 def shutdown_hook(producer):
 	logger.info('closing kafka producer')
