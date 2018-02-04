@@ -4,7 +4,7 @@
 import argparse
 import logging
 import json
-
+import atexit
 from cassandra.cluster import Cluster
 from kafka import KafkaConsumer
 
@@ -18,6 +18,12 @@ logging.basicConfig()
 logger = logging.getLogger('data-storage')
 logger.setLevel(logging.DEBUG)
 
+
+def shutdown_hook(consumer, session):
+    logger.info('closing resource')
+    consumer.close()
+    session.shutdown()
+    logger.info('released resource')
 
 def save_data(stock_data, session):
     try:
@@ -66,6 +72,7 @@ if __name__ == '__main__':
     session.set_keyspace(keyspace)
     session.execute("CREATE TABLE IF NOT EXISTS %s (symbol text, trade_time timestamp, price float, PRIMARY KEY (symbol, trade_time))" % table)
 
+    atexit.register(shutdown_hook, consumer, session)
     for msg in consumer:
     	# logger.debug(msg)
     	save_data(msg.value, session)
