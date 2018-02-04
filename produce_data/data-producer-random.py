@@ -47,6 +47,13 @@ def http_transport_handler(span):
 
 	requests.post('http://localhost:9411/api/v1/spans', data = span, headers={'Content-Type':'application/x-thrift'})
 
+def enrich_with_zipkin_data(data):
+	zipkin_attr = get_zipkin_attrs()
+	data['trace_id'] = zipkin_attr.trace_id
+	data['parent_span_id'] = zipkin_attr.parent_span_id
+	data['is_sampled'] = True if zipkin_attr.is_sampled else False
+	return data
+
 def shutdown_hook(producer):
 	logger.info('closing kafka producer')
 	producer.flush(10)
@@ -64,6 +71,7 @@ def fetch_price():
 		'last_trade_time': trade_time,
 		'price': price
 	}
+	data = enrich_with_zipkin_data(data)
 	data = json.dumps(data)
 	logger.info('retrieved stock price % s', data)
 	return data

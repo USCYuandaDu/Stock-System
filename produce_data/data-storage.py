@@ -10,6 +10,8 @@ from cassandra.cluster import Cluster
 from kafka import KafkaConsumer
 from py_zipkin.zipkin import zipkin_span
 from py_zipkin.thread_local import get_zipkin_attrs
+from py_zipkin.zipkin import ZipkinAttrs
+from py_zipkin.util import generate_random_64bit_string
 
 topic_name = ''
 kafka_broker = ''
@@ -24,6 +26,15 @@ logger.setLevel(logging.DEBUG)
 def http_transport_handler(span):
    requests.post('http://localhost:9411/api/v1/spans', data = span, headers={'Content-Type':'application/x-thrift'})
 
+def construct_zipkin_attrs(data):
+    parsed = json.loads(data)
+    return ZipkinAttrs(
+        trace_id = parsed.get('trace_id'),
+        parent_span_id = parsed.get('parent_span_id'),
+        is_sampled = parsed.get('is_sampled'),
+        flags = '0',
+        span_id = generate_random_64bit_string()
+    )
 
 def shutdown_hook(consumer, session):
     logger.info('closing resource')
@@ -32,7 +43,8 @@ def shutdown_hook(consumer, session):
     logger.info('released resource')
 
 def save_data(stock_data, session):
-    with zipkin_span(service_name='data_storage', span_name='save_data', transport_handler = http_transport_handler, sample_rate=100.0):
+    zipkin_attrs = construct_zipkin_attrs(stock_data)
+    with zipkin_span(service_name='data_storage', span_name='save_data', transport_handler = http_transport_handler, zipkin_attrs=zipkin_attrs):
         try:
             logger.debug('start to save the data %s', stock_data)
             parsed = json.loads(stock_data)
