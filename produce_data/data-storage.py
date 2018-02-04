@@ -5,8 +5,11 @@ import argparse
 import logging
 import json
 import atexit
+import requests
 from cassandra.cluster import Cluster
 from kafka import KafkaConsumer
+from py_zipkin.zipkin import zipkin_span
+from py_zipkin.thread_local import get_zipkin_attrs
 
 topic_name = ''
 kafka_broker = ''
@@ -18,6 +21,9 @@ logging.basicConfig()
 logger = logging.getLogger('data-storage')
 logger.setLevel(logging.DEBUG)
 
+def http_transport_handler(span):
+   requests.post('http://localhost:9411/api/v1/spans', data = span, headers={'Content-Type':'application/x-thrift'})
+
 
 def shutdown_hook(consumer, session):
     logger.info('closing resource')
@@ -26,17 +32,18 @@ def shutdown_hook(consumer, session):
     logger.info('released resource')
 
 def save_data(stock_data, session):
-    try:
-        logger.debug('start to save the data %s', stock_data)
-        parsed = json.loads(stock_data)
-        symbol = str(parsed.get('symbol'))
-        price = float(parsed.get('price'))
-        timestamp = parsed.get('last_trade_time')
-        statement = "INSERT INTO %s (symbol, trade_time, price) VALUES ('%s', '%s', %f)" % (table, symbol, timestamp, price)
-        session.execute(statement)
+    with zipkin_span(service_name='data_storage', span_name='save_data', transport_handler = http_transport_handler, sample_rate=100.0):
+        try:
+            logger.debug('start to save the data %s', stock_data)
+            parsed = json.loads(stock_data)
+            symbol = str(parsed.get('symbol'))
+            price = float(parsed.get('price'))
+            timestamp = parsed.get('last_trade_time')
+            statement = "INSERT INTO %s (symbol, trade_time, price) VALUES ('%s', '%s', %f)" % (table, symbol, timestamp, price)
+            session.execute(statement)
 
-    except Exception as e:
-    	print e
+        except Exception as e:
+        	print e
 
 
 if __name__ == '__main__':
