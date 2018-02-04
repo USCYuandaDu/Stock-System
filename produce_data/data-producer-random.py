@@ -15,10 +15,14 @@ import datetime
 import random
 #atexit can be used to register shutdown_hook
 import atexit
+import requests
 
 from kafka import KafkaProducer
 from kafka.errors import KafkaError, KafkaTimeoutError
 from yahoo_finance import Share
+
+from py_zipkin.zipkin import zipkin_span
+from py_zipkin.thread_local import get_zipkin_attrs
 
 logging.basicConfig()
 logger = logging.getLogger('data-producer')
@@ -39,34 +43,44 @@ kafka_broker = 'localhost:9092'
 # ...     print msg
 #test
 
+def http_transport_handler(span):
+
+	requests.post('http://localhost:9411/api/v1/spans', data = span, headers={'Content-Type':'application/x-thrift'})
+
 def shutdown_hook(producer):
 	logger.info('closing kafka producer')
 	producer.flush(10)
 	producer.close(10)
 	logger.info('kafka producer closed')
 
-def fetch_price_and_send(producer):
-    logger.debug('Start to fetch stock price for %s', symbol)
-    try:
-        # price = json.dumps(getQuotes(symbol))
-        price = random.randint(30, 120)
-        trade_time = int(round(time.time() * 1000))
-        data = {
-        	'symbol': symbol,
-        	'last_trade_time': trade_time,
-        	'price': price
-        }
-        data = json.dumps(data)
-        # timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%dT%H:%MZ')
-        # payload = ('[{"StockSymbol":"AAPL","LastTradePrice":%d,"LastTradeDateTime":"%s"}]' % (price, timestamp)).encode('utf-8')
+@zipkin_span(service_name='data_producer', span_name='fetch_price')
+def fetch_price():
 
-        logger.debug('Retrieved stock info %s', data)
-        producer.send(topic=topic_name, value=data)
-        logger.debug('Sent stock price for %s to Kafka', symbol)
-    except KafkaTimeoutError as timeout_error:
-        logger.warn('Failed to send stock price for %s to kafka, caused by: %s', (symbol, timeout_error.message))
-    except Exception:
-        logger.warn('Failed to fetch stock price for %s', symbol)
+	logger.debug('about to fetch price')
+	trade_time = int(round(time.time() * 1000))
+	price = random.randint(30,120)
+	data = {
+		'symbol': symbol,
+		'last_trade_time': trade_time,
+		'price': price
+	}
+	data = json.dumps(data)
+	logger.info('retrieved stock price % s', data)
+	return data
+@zipkin_span(service_name='data_producer', span_name='send_to_kafka')
+def send_to_kafka(data):
+
+	try:
+		producer.send(topic=topic_name, value=data)
+		logger.debug('sent data to kafka %s', data)
+	except Exception as e:
+		logger.warn('failed to send price to kakfa')
+
+def fetch_price_and_send(producer):
+
+	with zipkin_span(service_name='data_producer', span_name='fetch_price_and_send', transport_handler=http_transport_handler, sample_rate=100.0):
+		data = fetch_price()
+		send_to_kafka(data)
 
 if __name__ == '__main__':
 	# parser = argparse.ArgumentParser()

@@ -35,6 +35,7 @@ def shutdown_hook(producer):
 	producer.close(10)
 	logger.info('kafka producer closed')
 
+
 def fetch_price_and_send(producer, stock):
 	logger.debug('about to fetch price')
 	stock.refresh()
