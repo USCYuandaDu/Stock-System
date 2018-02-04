@@ -27,9 +27,9 @@ logger = logging.getLogger('data-producer')
 # we could ouly see the log if its level greater or equal than DEBUG
 logger.setLevel(logging.DEBUG)
 
-symbol = ''
-topic_name = ''
-kafka_broker = ''
+symbol = 'APPL'
+topic_name = 'stock-analyzer'
+kafka_broker = 'localhost:9092'
 
 
 # used KafkaConsumer to test the data
@@ -50,11 +50,18 @@ def fetch_price_and_send(producer):
     try:
         # price = json.dumps(getQuotes(symbol))
         price = random.randint(30, 120)
-        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%dT%H:%MZ')
-        payload = ('[{"StockSymbol":"AAPL","LastTradePrice":%d,"LastTradeDateTime":"%s"}]' % (price, timestamp)).encode('utf-8')
+        trade_time = int(round(time.time() * 1000))
+        data = {
+        	'symbol': symbol,
+        	'last_trade_time': trade_time,
+        	'price': price
+        }
+        data = json.dumps(data)
+        # timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%dT%H:%MZ')
+        # payload = ('[{"StockSymbol":"AAPL","LastTradePrice":%d,"LastTradeDateTime":"%s"}]' % (price, timestamp)).encode('utf-8')
 
-        logger.debug('Retrieved stock info %s', price)
-        producer.send(topic=topic_name, value=str(price), timestamp_ms=time.time())
+        logger.debug('Retrieved stock info %s', data)
+        producer.send(topic=topic_name, value=data)
         logger.debug('Sent stock price for %s to Kafka', symbol)
     except KafkaTimeoutError as timeout_error:
         logger.warn('Failed to send stock price for %s to kafka, caused by: %s', (symbol, timeout_error.message))
@@ -62,15 +69,15 @@ def fetch_price_and_send(producer):
         logger.warn('Failed to fetch stock price for %s', symbol)
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser()
-	parser.add_argument('symbol', help='the symbol of the stock')
-	parser.add_argument('topic_name', help='the name of the topic')
-	parser.add_argument('kafka_broker', help='the location of the kafka')
+	# parser = argparse.ArgumentParser()
+	# parser.add_argument('symbol', help='the symbol of the stock')
+	# parser.add_argument('topic_name', help='the name of the topic')
+	# parser.add_argument('kafka_broker', help='the location of the kafka')
 
-	args = parser.parse_args()
-	symbol = args.symbol
-	topic_name = args.topic_name
-	kafka_broker = args.kafka_broker
+	# args = parser.parse_args()
+	# symbol = args.symbol
+	# topic_name = args.topic_name
+	# kafka_broker = args.kafka_broker
 
 	producer = KafkaProducer(
 		# if we have kafka cluster with 1000 nodes, we do not need to pass these 1000 IPs to kafka_broker.
