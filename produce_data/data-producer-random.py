@@ -91,13 +91,13 @@ def fetch_price_and_send(producer):
 		send_to_kafka(data)
 
 if __name__ == '__main__':
-	# parser = argparse.ArgumentParser()
-	# parser.add_argument('symbol', help='the symbol of the stock')
+	parser = argparse.ArgumentParser()
+	parser.add_argument('symbol', help='the symbol of the stock')
 	# parser.add_argument('topic_name', help='the name of the topic')
 	# parser.add_argument('kafka_broker', help='the location of the kafka')
 
-	# args = parser.parse_args()
-	# symbol = args.symbol
+	args = parser.parse_args()
+	symbol = args.symbol
 	# topic_name = args.topic_name
 	# kafka_broker = args.kafka_broker
 
