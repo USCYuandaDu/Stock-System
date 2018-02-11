@@ -5,6 +5,8 @@ from kafka import KafkaConsumer
 
 import logging
 import argparse
+import redis
+import atexit
 
 logging.basicConfig()
 logger = logging.getLogger('redis-publisher')
@@ -12,6 +14,10 @@ logger.setLevel(logging.DEBUG)
 
 topic_name = None
 kafka_broker = None
+
+def shutdown_hook(kafka_consumer):
+	logger.info('shutdown kafka consumer')
+	kafka_consumer.close()
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -36,6 +42,8 @@ if __name__ == '__main__':
 
 	redis_client = redis.StrictRedis(host = redis_host, port = redis_port)
 
+	atexit.register(shutdown_hook, kafka_consumer)
+	
 	for msg in kafka_consumer:
 		logger.info('received data from kafka %s' % str(msg))
 		redis_client.publish(redis_channel, msg.value)
