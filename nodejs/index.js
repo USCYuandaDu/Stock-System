@@ -10,6 +10,11 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 
+// create scoket io server
+
+var scoketio = require('socket.io')(server);
+
+
 // setup redis client
 
 var redis = require('redis');
@@ -25,10 +30,17 @@ redisClient.subscribe(redis_channel);
 redisClient.on('message', function(channel, message) {
 	if(channel == redis_channel) {
 		console.log('message received %s', message);
+		// define event called data
+		scoketio.sockets.emit('data', message);
 	}
 });
 
 app.use(express.static(__dirname = './public'));
+app.use('/jquery', express.static(__dirname = './node_modules/jquery/dist/'));
+app.use('/bootstrap', express.static(__dirname = './node_modules/bootstrap/dist/'));
+app.use('/d3', express.static(__dirname = './node_modules/d3/'));
+app.use('/nvd3', express.static(__dirname = './node_modules/nvd3/build'));
+
 
 server.listen(3000, function() {
 	console.log('server started at port 3000')
