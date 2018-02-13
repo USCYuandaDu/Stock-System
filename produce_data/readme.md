@@ -22,3 +22,13 @@ Functionality:
 3.Work with Cassandra Using Python
   1.pip install cassandra-driver.
  
+# data-stream.py
+Functionality:
+1.Stream data from Kafka
+  Should be able to read from any kafka cluster.
+  Should be able to read from any kafka topic.
+2. Perform Computation
+  Average every 5 seconds.
+3.Write back to Kafka
+  Should be able to write to any kafka cluster.
+  Should be able to write to any kafka topic.
