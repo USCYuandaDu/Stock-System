@@ -42,7 +42,12 @@ Attributes:
 Installation and run:
 docker run -d -p 2181:2181 -p 2888:2888 -p 3888:3888 -- name zookeeper confluent/zookeeper
 
-# 
+# Cassandra
+An open source distributed storage system that provides high availability.
+Inspired by Amazon DynamoDB and Google BigTable
+Installation and run:
+docker run -d -p 7199:7199 -p 9042:9042 -p 9160:9160 -p 7001:7001 --name cassandra cassandra:3.7
+
 
 
 
