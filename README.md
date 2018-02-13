@@ -48,6 +48,43 @@ Inspired by Amazon DynamoDB and Google BigTable
 Installation and run:
 docker run -d -p 7199:7199 -p 9042:9042 -p 9160:9160 -p 7001:7001 --name cassandra cassandra:3.7
 
+# Spark
+An open source cluster computing framework.
+Atrributes:
+1. Respond to limitations of Apache Hadoop.
+2. Computation optimization
+3. In memory computing
+Stage:
+Jobs are divided into stages. Stages are divied based on computational boundaries,
+all computations(operators) cannot be Updated in a single Stage.
+Task:
+Each stage has some tasks, one task per partition. One task is executed on one partition of data on one executor.
+RDD(Resilient Distributed Datasets):
+1.How Spark represents data
+2.RDD for one data set spread across the Spark cluster.
+
+Installation:
+Download spark-2.0.0-bin-hadoop2.7 http://spark.apache.org/downloads.html
+tar xvf spark-2.0.0-bin-hadoop2.7
+mv spark-2.0.0-bin-hadoop2.7 spark
+rm spark-2.0.0-bin-hadoop2.7.tgz
+add ./bin to ~/.bash_profile
+Spark-shell (interactive shell in scala)
+pyspark (interactive shell in python)
+Open up browser to checkout Spark UI http://localhost:4040
+
+# Spark Streaming
+Spark Stream with Mini-batch
+
+1. Stram Processing:
+  Input is dynamic and unbound.
+  Analysis is ongoing.
+  Respond immediately.
+ 
+  
+ 
+
+
 
 
 
