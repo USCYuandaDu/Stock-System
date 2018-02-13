@@ -24,12 +24,26 @@ Attributes:
 1.fast - hundreds MB/s from thousands of client.
 2.Scalable - easily scale up and down without downtime.
 3.Durable - Messages are persisted on disk to prevent data loss.
+Dependencies:
+1.scala
+2.sbt
+3.python
+4.pip
+Installation and run:
+docker run -d -p 9092:9092 -e KAFKA_ADVERTISED_HOST_NAME=localhost -e KAFKA_ADVERTISED_PORT=9092 --name kafka --link zookeeper:zookeeper confluent/kafka
+
+Docker will download the image if it can not find locally.
 
 # Zookeeper
 An open source distributed system to coordinate node.
 To make building and coordinate the distributed system easier.
 Attributes:
-1. Coordinate nodes with using shared storage
+1. Coordinate nodes with using shared storage.
+Installation and run:
+docker run -d -p 2181:2181 -p 2888:2888 -p 3888:3888 -- name zookeeper confluent/zookeeper
+
+# 
+
 
 
 
