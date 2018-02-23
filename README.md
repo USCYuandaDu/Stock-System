@@ -1,13 +1,11 @@
 # Stock-System
 
 # Description
----
 
 Built data pipline to store and analyze data in real time.
 
 
 # Docker
----
 
 A tool to package and deploy applications inside containers
 
@@ -24,7 +22,6 @@ A tool to package and deploy applications inside containers
 Download from APP store and start it.
 
 # Kafka
----
 
 An open source distributed messaging system.
 
@@ -58,7 +55,6 @@ docker run -d -p 9092:9092 -e KAFKA_ADVERTISED_HOST_NAME=localhost -e KAFKA_ADVE
 Docker will download the image if it can not find locally.
 
 # Zookeeper
----
 
 An open source distributed system to coordinate node.
 
@@ -73,7 +69,6 @@ To make building and coordinate the distributed system easier.
 docker run -d -p 2181:2181 -p 2888:2888 -p 3888:3888 --name zookeeper confluent/zookeeper
 
 # Cassandra
----
 An open source distributed storage system that provides high availability.
  
 ### Consistent Hashing
