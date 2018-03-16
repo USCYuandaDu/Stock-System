@@ -277,7 +277,131 @@ An open source distributed storage system that provides high availability.
 2.A node owns the range of values <= to the token and > the token of previous node
 3.Nodes moving will only affect small ranges of data
 
+### Consistent Level in Cassandra
+
+1.Coordinator is the broker which client connected to
+
+2.Coordinator will connect data and make duplicates(Replication factor and write consistency)
+
+3.Data Center, each one has local coordinators and remote coordinator. So there is local quorom.
+
+### Hinted Handoff
+
+It is possible that when writing, the targted replica is offline, coordinator node will record a hinted handoff to remember this failure and send out the data again when the target node is back online, write is generally super fast and always available because of this.
+
+
+### Read Operations inside Cassandra:
+
+1.Client can contact any node to read 
+
+2.In the case of collision of different versions, a repair request will be sent to outdated nodes(timestamp).
+The timestamp could be error also, because machines may have different clocks
+
+### Data Replication:
+
+### Multi-DC Deployment:
+
+1.Cross Data Center Lantency 2.Replication Opt
+
+### Ways to ensure data integrity:
+
+1.Hinted Handoff 2.Read Repair 3.Anti-entropy Repair(Merkel Tree)
+
+
 ### start Cassandra:
 docker run -d -p 7199:7199 -p 9042:9042 -p 9160:9160 -p 7001:7001 --name cassandra cassandra:3.7
+
+# Data processing layer:
+
+1.Highly available 
+
+2.Fast computation 
+
+3.Able to handle spike traffic 
+
+4. Retry on failure
+
+### Apache Hadoop HDFS:
+
+1.Handels data storage aspect of big data
+
+2.Master-Slave architecture(Namenode stores metadata, Datanode stores real data, data is organized in small blocks, replicated)
+
+3.Data split into different slaves
+
+4.Job tracker in the namenode and task trackers in the datanode
+
+### Yarn could control the resource
+
+### Problem within Hadoop
+
+1.Massive Disk IO: Mapper write intermdediate data into disks, transferred through network for shuffling, reducer load intermediate data from disk
+
+2.Boilerplate code
+
+3.Hard to debug
+
+4.Super slow for iterative algorithms
+
+# Spark(Scala or Python)
+optimize with memory
+
+
+Word Count: 
+```python
+text = sc.textFile('shakerspear.txt')
+counts = text.flatMap(lambda line: line.split(" ").map(lambda word: (word, 1)).reduceByKey(lambda a,b: a + b))
+counts.collect()
+```
+### Architecture:
+
+1.Driver - The application that runs on Spark for data computation
+
+2.Cluster Manager - manages the scheduling of jobs(Mesos)
+
+3.Worker Node - slave nodes
+
+4.Executor - The process responsible for launching tasks which exceuted in worker node
+
+### Job:
+
+A logical step in application that transforms data and get result save(), collect(), each action will result in a job.
+jobs are divided into stages. Stages are divided based on computational boundaries.
+
+### Task:
+Each stage has some tasks, one task per partition. One task is executed on one partiton of data on one executor(JVM)
+
+
+### Resilient Distributed Datasets - RDD
+
+1.RDD for one data set spread across the Spark cluster, RDDs are immutable and readonly and can only be built by loading data from raw storage or transforming from other RDD
+
+2.Each rdd has a set of partitions, a set of dependecies on parent RDD, a function for computing from its parents and metadata about data placement
+
+### RDD Transformation
+
+map, filter, flatMap, mapPartitions, sample, union, intersection
+
+### RDD Action:
+
+collect, count, countByValue, reduce, top
+
+
+### Lazy Evaluation:
+
+1.Transformation won't actually perform calculation
+
+2.Aggregate compute steps for opt
+
+3.Actual computation happens at action step
+
+
+
+
+
+
+
+
+
 
 
