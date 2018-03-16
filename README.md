@@ -396,12 +396,23 @@ collect, count, countByValue, reduce, top
 3.Actual computation happens at action step
 
 
+### Data Locality
+
+1.Always think about how your data is organized
+
+2.Always think about how to reduce the number of shuffles when writing Spark program
+
+### reduceByKey vs groupByKey
+
+reduceByKey: performs local grouping first then shuffle for aggregation
 
 
+# Stream Processing:
 
+Input is dynamic and unbound, analysis is ongoing, respond immediately
 
+### Spark Stream Library
 
+1.Data would store in DB and also feed to Spark, in case of bugs of Spark 
 
-
-
-
+2.Spark Stream with Mini-batch
