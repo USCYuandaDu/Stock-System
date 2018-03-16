@@ -41,6 +41,17 @@ Used it to make data transportation easier.
 
 2.Pull - low throughput, simple server logic.
 
+3.Producers use push model and consumers use pull model
+
+### Topic and Partition:
+
+phiscally, topic is made up of partitions which could store more data and reach data quickly.
+
+### Consumer Group:
+
+A group of consumers.
+
+
 ### Dependencies:
 
 1.scala
