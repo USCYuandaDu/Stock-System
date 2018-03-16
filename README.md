@@ -110,6 +110,82 @@ To make building and coordinate the distributed system easier.
 ### Installation:
 docker run -d -p 2181:2181 -p 2888:2888 -p 3888:3888 --name zookeeper confluent/zookeeper
 
+### Master-Slave Model:
+
+1.Master knows a list of tasks
+
+2.Master in charge of distrbuting tasks
+
+3.Slaves in charge of executing tasks
+
+4.Slaves need to report status back to Master
+
+problem: Master Election, Crash Detection, Group membership, Metadata management
+
+### Ways to coordinate:
+
+1.Message passing
+
+2.Shared storage(Zookeeper)
+
+### Split-brain Example:
+
+1.In a system, we have one master, one backup master, and many workers.
+
+2.Part of the workers are having trouble to reach master.
+
+3.Connect with backup master instead.
+
+### Data Tree:
+
+1.Organized in hierarchical structure
+
+2.Similar to file system
+
+3.Kafka could connect all brokers through one borker by zookeeper, because all brokers info are stored in zookeeper.
+
+### Znode:
+
+1.Basic unit of Data Tree
+
+2.Persisent Znode, Ephermal Znode and Sequential Znode
+
+### Watcher:
+
+1.Help client to know changes to znodes, zookeeper push a notification
+
+### Leader Election within Zookeeper:
+
+Server has following mode: Leader, Follower, Observer
+
+### State Replication within Zookeeper:
+Zab protocal
+
+Leader:
+1.Receives write requests
+
+2.convert requests into transaction
+
+3.Leader send proposal message to all follower
+
+4.Once receiving ack from a quorum, leader sends commit message
+
+Follower:
+1.Received Proposal message from leader
+
+2.Check if the leader is the correct leader
+
+3.Check if the transaction is in correct order
+
+4.Send ack back to leader
+
+5.Received COMMIT message from leader
+
+6.apply change to the Data Tree
+### Client-Server Interaction:
+
+1.Connection: TCP connection, Client only connects to server with newer/equal state, configurable session timeout
+
 # Cassandra
 An open source distributed storage system that provides high availability.
  
