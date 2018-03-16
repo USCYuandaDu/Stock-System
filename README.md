@@ -226,10 +226,52 @@ An open source distributed storage system that provides high availability.
 
 ### Gossip Protocal(spead messages like who is down):
 
-1.Push: a.upon reception, every node forward messages to multiple other nodes b. low latency, high redundancy
+1.Push: a.upon reception, every node forward messages to multiple other nodes b. low latency, high redundancy(cassandra used)
 
 2.Pull: a.every node periodically contact other nodes fo missing information b. high latency, low redundancy
  
+3.Gossip protocal can pass outdated information
+
+4.Or cassandra uses seed nodes to stabilize the cluster, seed nodes are contacted by other nodes when they start up.
+
+### Data Model:
+
+1.Every name/value pair is a column
+
+2. Add a row key to be able to reference an "entity"
+
+3.Group of rows can be think as a table (column family)
+
+4.Multiple tables becomes keyspace
+
+### Commit Log
+
+1.crash-recovery mechanism
+
+2.all write operation is immediately written to commit log
+
+
+### MemTable
+
+### SSTable
+
+1.content of memtable gets written to SSTable after memtable if full
+
+2.Immutable cannot be changed
+
+3.Changes are appended
+
+4.Sequential write to disk
+
+
+### Compaction:
+
+1.Merge of SSTables
+
+2.New merged data is sorted as well (sorted by row key and col key)
+
+3.Reduce number of seeks
+
 ### Consistent Hashing
 1.Each node is assigned one or more ranges of data identified by Token
 2.A node owns the range of values <= to the token and > the token of previous node
