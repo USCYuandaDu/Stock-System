@@ -35,6 +35,12 @@ Used it to make data transportation easier.
 
 3.Durable - Messages are persisted on disk to prevent data loss.
 
+### PULL vs PUSH:
+
+1.Push - high throughput, complex server logic.
+
+2.Pull - low throughput, simple server logic.
+
 ### Dependencies:
 
 1.scala
