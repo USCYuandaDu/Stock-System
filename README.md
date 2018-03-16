@@ -305,7 +305,7 @@ The timestamp could be error also, because machines may have different clocks
 
 ### Ways to ensure data integrity:
 
-1.Hinted Handoff 2.Read Repair 3.Anti-entropy Repair(Merkel Tree)
+1.Hinted Handoff 2.Read Repair 3.Anti-entropy Repair(Merkel Tree -- Later)
 
 
 ### start Cassandra:
@@ -416,3 +416,65 @@ Input is dynamic and unbound, analysis is ongoing, respond immediately
 1.Data would store in DB and also feed to Spark, in case of bugs of Spark 
 
 2.Spark Stream with Mini-batch
+
+
+# Redis
+
+Open source in-memory data structure store
+
+### Cache:
+
+Cache is an amout of faster memory used to improve data access
+
+### Caching strategy:
+
+1.FIFO 2.LRU 3.LF(frequency)U 4.Time-based expiration
+
+### Use Cases:
+
+1.Use Redis as LRU cache
+
+2.Use Redis as non-critical message queue
+
+# Mesos:
+
+An open-source cluster manager that turn datacenter/cluster into one computer, provide simple API, hide internal complex infrastructure from applications
+
+### Resources and Attrributes:
+
+1.Resources represent what a slave has to offer:1.cpu 2.mem 3.disk 4.ports
+
+### Framework:
+
+Framework in Mesos is a ditributed application developed with Mesos API
+
+### Components:
+1.Mesos Master
+
+2.Mesos Slave: Run tasks, Report available resources, Report task status
+
+3.Zookeeper
+
+4.Frameworks (scheduler + executor), scheduler connect executor through mesos
+
+5.Protocal Buffer + libprocess
+
+### Two level scheduling
+
+1.Allocation Module decide resources for each framework
+
+2.Framework Scheduler decide resources for each tasks
+
+3.Scheduling Algorithm(Dominant Resource Fairness Algorithmn(DRF -- later))
+
+
+### Max-min Fairness Algorithmn
+
+1.Satisfy small tasks first
+
+2.DRF is a max-min fair algorithm for hetergeous resources
+
+
+
+
+
