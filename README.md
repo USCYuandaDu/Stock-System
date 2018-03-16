@@ -21,6 +21,16 @@ A tool to package and deploy applications inside containers
 
 Download from APP store and start it.
 
+# Data Ingestion Layer:
+
+1.High throughput
+
+2.Merely a pass through
+
+3.Simple processing logic
+
+4.Cannot serve as storage layer
+
 # Kafka
 
 An open source distributed messaging system.
@@ -186,8 +196,39 @@ Follower:
 
 1.Connection: TCP connection, Client only connects to server with newer/equal state, configurable session timeout
 
+# Data storage layer
+
+1.High availablity
+
+2.Fault tolerance
+
+3.Handles high data volume
+
+4.Able to handle various type of data
+
+### OLTP vs OLAP
+
+transactional data vs analytical data
+
+### Common storage problems:
+
+users are getting slow read ? 
+
+1. Read/Write separation: a.write to primary master b.read from all the nodes c.replication to copy data so that write won't block read
+
+2. Add Caching: a.hit cache before hitting DB b. move reads into in memory cache
+
+3. Shard/Partition data based on some rules
+
+
 # Cassandra
 An open source distributed storage system that provides high availability.
+
+### Gossip Protocal(spead messages like who is down):
+
+1.Push: a.upon reception, every node forward messages to multiple other nodes b. low latency, high redundancy
+
+2.Pull: a.every node periodically contact other nodes fo missing information b. high latency, low redundancy
  
 ### Consistent Hashing
 1.Each node is assigned one or more ranges of data identified by Token
@@ -196,3 +237,5 @@ An open source distributed storage system that provides high availability.
 
 ### start Cassandra:
 docker run -d -p 7199:7199 -p 9042:9042 -p 9160:9160 -p 7001:7001 --name cassandra cassandra:3.7
+
+
