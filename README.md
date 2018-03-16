@@ -45,11 +45,36 @@ Used it to make data transportation easier.
 
 ### Topic and Partition:
 
-phiscally, topic is made up of partitions which could store more data and reach data quickly.
+phiscally, topic is made up partitions which could store more data and reach data quickly.
+
+It used log file(partitions) to store the messages. The messages would store certain time.
+
+One partition is a directory. And phiscally one partition is stored in many files which name is the offset.
+
+It also has a sliding window to delete the old data.
+
+
+### IO optimization:
+
+1.append only writing so that read do not block write
+
+2.One partition is a one long file.(sequential IO is fast than random access)
+
+3.zero copy, do not copy data from kernel to application
 
 ### Consumer Group:
 
 A group of consumers.
+
+### Data replication:
+
+1.Producer write through partition leader.
+
+2.Partition leader write the messages into the local disks
+
+3.Partition followers pull data from the Leader.
+
+4.When Leader recieve enough ACK from the partition followers, it's written.
 
 
 ### Dependencies:
